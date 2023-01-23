@@ -88,18 +88,9 @@ namespace Gauss_Seidel
 
         private void runButton_Click(object sender, EventArgs e)
         {
-            //test data
             List<List<List<double>>> systems = new List<List<List<double>>>();
-            string filePath = "equations.txt";
+            string filePath = "equations.txt"; //TEST
             systems = readFromFile(filePath);
-            /*for (int i = 0; i < 3; i++)
-            {
-                List<List<double>> equations = new List<List<double>>();
-                equations.Add(new List<double>() { 5, -1, 2, 12 });
-                equations.Add(new List<double>() { 3, 8, -2, -25 });
-                equations.Add(new List<double>() { 1, 1, 4, 6 });
-                systems.Add(equations);
-            }*/
             int amountOfThreads = 2;
             //int amountOfThreads = trackBar1.Value;
             
@@ -115,11 +106,6 @@ namespace Gauss_Seidel
             }
 
             resultGridView.DataSource = convertResults(results);
-
-            //test data
-           
-            //result = Solve(equations, maxIterations, tolerance);
-            int x = 1;
         }
         public static void Solve(List<List<double>> equations, int maxIterations, double tolerance)
         {
