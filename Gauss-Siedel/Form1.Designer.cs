@@ -44,6 +44,8 @@
             this.textBox95 = new System.Windows.Forms.TextBox();
             this.tolerance = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.timeElapsedBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -198,11 +200,31 @@
             this.trackBar1.Value = 50000;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(463, 26);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(70, 13);
+            this.label1.TabIndex = 225;
+            this.label1.Text = "Time elapsed";
+            this.label1.Click += new System.EventHandler(this.label1_Click_1);
+            // 
+            // timeElapsedBox
+            // 
+            this.timeElapsedBox.Location = new System.Drawing.Point(445, 42);
+            this.timeElapsedBox.Name = "timeElapsedBox";
+            this.timeElapsedBox.ReadOnly = true;
+            this.timeElapsedBox.Size = new System.Drawing.Size(106, 20);
+            this.timeElapsedBox.TabIndex = 226;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(702, 583);
+            this.Controls.Add(this.timeElapsedBox);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label106);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.resultGridView);
@@ -247,6 +269,8 @@
         private System.Windows.Forms.TextBox textBox95;
         private System.Windows.Forms.Label tolerance;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox timeElapsedBox;
     }
 }
 

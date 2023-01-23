@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -98,13 +99,15 @@ namespace Gauss_Seidel
             threadsSemaphore= tempSemaphore;
             int maxIterations = 10; // maksymalna liczba iteracji
             double tolerance = 0.0001; // tolerancja
+            Stopwatch sw = Stopwatch.StartNew();
             foreach (List<List<double>> system in systems)
             {
                 threadsSemaphore.WaitOne();
                 Thread thread = new Thread(() => Solve(system, maxIterations, tolerance));
                 thread.Start();
             }
-
+            sw.Stop();
+            timeElapsedBox.Text = sw.ElapsedMilliseconds.ToString();
             resultGridView.DataSource = convertResults(results);
         }
         public static void Solve(List<List<double>> equations, int maxIterations, double tolerance)
@@ -202,6 +205,11 @@ namespace Gauss_Seidel
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
         {
 
         }
