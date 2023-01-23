@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +24,42 @@ namespace Gauss_Seidel
         {
             InitializeComponent();
             iterationsBar.ValueChanged += iterationsBar_ValueChanged;
+        }
+        private List<List<List<double>>> readFromFile (string filename)
+        {
+            List<List<List<double>>> readSystems = new List<List<List<double>>>();
+            List<List<double>> systemOfEquations = new List<List<double>>();
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line == "###")
+                    {
+                        readSystems.Add(systemOfEquations);
+                        systemOfEquations = new List<List<double>>();
+                        
+                        //systemOfEquations.Clear();
+                    }
+                    else
+                    {
+                        string[] components = Regex.Matches(line, @"(-?\d*\,?\d+)(?=x|$)")
+                                                    .Cast<Match>()
+                                                    .Select(m => m.Value)
+                                                    .ToArray();
+
+                        List<double> equation = new List<double>();
+                        foreach (string component in components)
+                        {
+                            double value = double.Parse(component);
+                            equation.Add(value);
+                        }
+                        systemOfEquations.Add(equation);
+                    }
+                }
+            }
+            
+            return readSystems;
         }
         private DataTable convertResults(List<List<double>> results)
         {
@@ -52,14 +90,16 @@ namespace Gauss_Seidel
         {
             //test data
             List<List<List<double>>> systems = new List<List<List<double>>>();
-            for (int i = 0; i < 3; i++)
+            string filePath = "equations.txt";
+            systems = readFromFile(filePath);
+            /*for (int i = 0; i < 3; i++)
             {
                 List<List<double>> equations = new List<List<double>>();
                 equations.Add(new List<double>() { 5, -1, 2, 12 });
                 equations.Add(new List<double>() { 3, 8, -2, -25 });
                 equations.Add(new List<double>() { 1, 1, 4, 6 });
                 systems.Add(equations);
-            }
+            }*/
             int amountOfThreads = 2;
             //int amountOfThreads = trackBar1.Value;
             
