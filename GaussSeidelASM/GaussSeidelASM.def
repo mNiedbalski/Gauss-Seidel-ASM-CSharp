@@ -1,0 +1,2 @@
+LIBRARY GaussSeidelASM
+EXPORTS MyProc1

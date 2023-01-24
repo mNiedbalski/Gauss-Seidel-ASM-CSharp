@@ -6,11 +6,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace Gauss_Seidel
 {
@@ -109,6 +111,23 @@ namespace Gauss_Seidel
             sw.Stop();
             timeElapsedBox.Text = sw.ElapsedMilliseconds.ToString();
             resultGridView.DataSource = convertResults(results);
+        }
+        public static void SolveInAsm(List<List<double>> equations, int maxIterations, double tolerance)
+        {
+            
+            int n = equations.Count; // liczba nieznanych
+            List<double> x = new List<double>(); // lista nieznanych
+            for (int i = 0; i < n; i++) x.Add(0); // ustawienie początkowych wartości nieznanych
+            bool done;
+            for(int j = 0; j < n; j++)
+            {
+                double temp = x[j]; // zapamiętanie poprzedniej wartości nieznanej
+                double sum = equations[j][n]; // suma wyrazów wolnych
+            }
+        }
+        public static void ASMSolving()
+        {
+            
         }
         public static void Solve(List<List<double>> equations, int maxIterations, double tolerance)
         {
