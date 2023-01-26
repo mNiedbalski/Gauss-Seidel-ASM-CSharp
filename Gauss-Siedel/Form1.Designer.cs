@@ -41,14 +41,22 @@
             this.label105 = new System.Windows.Forms.Label();
             this.resultGridView = new System.Windows.Forms.DataGridView();
             this.label106 = new System.Windows.Forms.Label();
-            this.textBox95 = new System.Windows.Forms.TextBox();
             this.tolerance = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.timeElapsedBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // checkBox1
@@ -108,6 +116,7 @@
             this.iterationsBar.TabIndex = 214;
             this.iterationsBar.Value = 50000;
             this.iterationsBar.Scroll += new System.EventHandler(this.iterationsBar_Scroll);
+            this.iterationsBar.ValueChanged += new System.EventHandler(this.iterationsBar_ValueChanged);
             // 
             // label101
             // 
@@ -167,23 +176,16 @@
             // label106
             // 
             this.label106.AutoSize = true;
-            this.label106.Location = new System.Drawing.Point(181, 442);
+            this.label106.Location = new System.Drawing.Point(192, 451);
             this.label106.Name = "label106";
-            this.label106.Size = new System.Drawing.Size(46, 13);
+            this.label106.Size = new System.Drawing.Size(49, 13);
             this.label106.TabIndex = 224;
-            this.label106.Text = "Threads";
-            // 
-            // textBox95
-            // 
-            this.textBox95.Location = new System.Drawing.Point(492, 315);
-            this.textBox95.Name = "textBox95";
-            this.textBox95.Size = new System.Drawing.Size(100, 20);
-            this.textBox95.TabIndex = 220;
+            this.label106.Text = "Threads:";
             // 
             // tolerance
             // 
             this.tolerance.AutoSize = true;
-            this.tolerance.Location = new System.Drawing.Point(501, 289);
+            this.tolerance.Location = new System.Drawing.Point(501, 266);
             this.tolerance.Name = "tolerance";
             this.tolerance.Size = new System.Drawing.Size(80, 13);
             this.tolerance.TabIndex = 221;
@@ -191,14 +193,15 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(12, 467);
-            this.trackBar1.Maximum = 100000;
-            this.trackBar1.Minimum = 100;
+            this.trackBar1.Location = new System.Drawing.Point(44, 467);
+            this.trackBar1.Maximum = 64;
+            this.trackBar1.Minimum = 1;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(387, 45);
+            this.trackBar1.Size = new System.Drawing.Size(333, 45);
             this.trackBar1.TabIndex = 223;
-            this.trackBar1.Value = 50000;
+            this.trackBar1.Value = 1;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // label1
             // 
@@ -218,18 +221,101 @@
             this.timeElapsedBox.Size = new System.Drawing.Size(106, 20);
             this.timeElapsedBox.TabIndex = 226;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(51, 499);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 13);
+            this.label2.TabIndex = 227;
+            this.label2.Text = "1";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(207, 499);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(19, 13);
+            this.label3.TabIndex = 228;
+            this.label3.Text = "32";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(358, 499);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(19, 13);
+            this.label4.TabIndex = 229;
+            this.label4.Text = "64";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(244, 451);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(13, 13);
+            this.label5.TabIndex = 230;
+            this.label5.Text = "1";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Location = new System.Drawing.Point(404, 282);
+            this.trackBar2.Maximum = 10000;
+            this.trackBar2.Minimum = 10;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(272, 45);
+            this.trackBar2.SmallChange = 1000;
+            this.trackBar2.TabIndex = 231;
+            this.trackBar2.TickFrequency = 100;
+            this.trackBar2.Value = 10000;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.toleranceTrackbar_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(532, 314);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(10, 13);
+            this.label6.TabIndex = 232;
+            this.label6.Text = " ";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(404, 314);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(22, 13);
+            this.label7.TabIndex = 233;
+            this.label7.Text = "0.1";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(644, 314);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(46, 13);
+            this.label8.TabIndex = 234;
+            this.label8.Text = "0.00001";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(702, 583);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.trackBar2);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.timeElapsedBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label106);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.resultGridView);
             this.Controls.Add(this.tolerance);
-            this.Controls.Add(this.textBox95);
             this.Controls.Add(this.label105);
             this.Controls.Add(this.label104);
             this.Controls.Add(this.label103);
@@ -247,6 +333,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.iterationsBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,11 +353,18 @@
         private System.Windows.Forms.Label label105;
         private System.Windows.Forms.DataGridView resultGridView;
         private System.Windows.Forms.Label label106;
-        private System.Windows.Forms.TextBox textBox95;
         private System.Windows.Forms.Label tolerance;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox timeElapsedBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
     }
 }
 
