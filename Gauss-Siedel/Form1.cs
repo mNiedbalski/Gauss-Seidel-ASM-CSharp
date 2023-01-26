@@ -23,7 +23,7 @@ namespace Gauss_Seidel
     public partial class Form1 : Form
     {
         [DllImport(@"E:\Osobiste\Projekt Asembler\Gauss-Siedel\x64\Debug\GaussSeidelASM.dll")]
-        static unsafe extern void MyProc1(float sum, float coefficientEq, float coefficientX, int jPassed, int kPassed);
+        static unsafe extern void MyProc1(float* sumPtr, float coefficientEq, float coefficientX, int jPassed, int kPassed);
         public static Semaphore threadsSemaphore;
         public static List<List<float>> results = new List<List<float>>();
         private static int amountOfThreads = 1;
@@ -101,7 +101,7 @@ namespace Gauss_Seidel
             List<List<List<float>>> systems = new List<List<List<float>>>();
             string filePath = "equations.txt"; //TEST
             systems = readFromFile(filePath);
-            toleranceValue = long.Parse(tolerance.Text);
+            float temppp = toleranceValue;
             Semaphore tempSemaphore = new Semaphore(amountOfThreads, amountOfThreads);
             threadsSemaphore= tempSemaphore;
             progressBar1.Maximum = systems.Count;
@@ -145,14 +145,19 @@ namespace Gauss_Seidel
                 {
                     float temp = x[j];
                     float sum = equations[j][n];
+                    float* sumPtr = &sum;
+                    //docelowo to będzie w asmie
                     for (int k=0; k < n; k++)
                     {
-                        MyProc1(sum, equations[j][k], x[k], j, k);
+                            MyProc1(sumPtr, equations[j][k], x[k], j, k);
                     }
                     x[j] = sum / equations[j][j];
                     if (Math.Abs(x[j] - temp) > toleranceValue) done = false;
+                    //koniec asm
                 }
+
                 if (done) break;
+                
             }
                 results.Add(x);
                 threadsSemaphore.Release();
@@ -171,15 +176,16 @@ namespace Gauss_Seidel
                 {
                     float temp = x[j];
                     float sum = equations[j][n];
-                    //od tego miejsca
+                    float* sumPtr = &sum;
+                    
                     float[] neededEquation = equations[j];
                     for (int k = 0; k < n; k++)
                     {
-                        MyProc1(sum, equations[j][k], x[k], j, k);
+                        MyProc1(sumPtr, equations[j][k], x[k], j, k);
                     }
 
                     if (Math.Abs(x[j] - temp) > tolerance) done = false;
-                    //do tego
+                    
                 }
                 if (done) break;
             }
@@ -200,8 +206,7 @@ namespace Gauss_Seidel
                     float sum = equations[j][n]; // suma wyrazów wolnych
                     for (int k = 0; k < n; k++)
                     {
-                        if (k != j) sum -= equations[j][k] * x[k];
-                        //Tutaj bedzie call do MyProc1(k,j,sum,coefficientEq, coefficientX)
+                        if (k != j) sum -= equations[j][k] * x[k];        
                     }
                     x[j] = sum / equations[j][j]; // obliczanie nowej wartości nieznanej
                     if (Math.Abs(x[j] - temp) > tolerance) done = false; // sprawdzanie czy wartość nieznanej się zmieniła
@@ -213,8 +218,8 @@ namespace Gauss_Seidel
         }
         private void toleranceTrackbar_ValueChanged(object sender, EventArgs e)
         {
-            label6.Text = (1/trackBar2.Value).ToString();
-            toleranceValue = 1 / trackBar2.Value;
+            label6.Text = (1/(double)trackBar2.Value).ToString();
+            toleranceValue = 1 / Convert.ToSingle(trackBar2.Value);
         }
         private void tolerance_ValueChanged(object sender, EventArgs e)
         {
@@ -232,7 +237,19 @@ namespace Gauss_Seidel
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (checkBox1.Checked)
+            {
+                checkBox2.Checked = false;
+                runInCSharp = true;
+            }
+        }
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                checkBox1.Checked = false;
+                runInCSharp = false;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)

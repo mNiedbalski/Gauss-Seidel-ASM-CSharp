@@ -79,6 +79,7 @@
             this.checkBox2.TabIndex = 13;
             this.checkBox2.Text = "Assembly code";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // progressBar1
             // 
@@ -259,7 +260,7 @@
             // 
             // trackBar2
             // 
-            this.trackBar2.Location = new System.Drawing.Point(404, 282);
+            this.trackBar2.Location = new System.Drawing.Point(407, 282);
             this.trackBar2.Maximum = 10000;
             this.trackBar2.Minimum = 10;
             this.trackBar2.Name = "trackBar2";
@@ -267,13 +268,13 @@
             this.trackBar2.SmallChange = 1000;
             this.trackBar2.TabIndex = 231;
             this.trackBar2.TickFrequency = 100;
-            this.trackBar2.Value = 10000;
+            this.trackBar2.Value = 10;
             this.trackBar2.ValueChanged += new System.EventHandler(this.toleranceTrackbar_ValueChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(532, 314);
+            this.label6.Location = new System.Drawing.Point(463, 314);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(10, 13);
             this.label6.TabIndex = 232;
@@ -282,7 +283,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(404, 314);
+            this.label7.Location = new System.Drawing.Point(408, 314);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 13);
             this.label7.TabIndex = 233;
@@ -293,9 +294,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(644, 314);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(46, 13);
+            this.label8.Size = new System.Drawing.Size(40, 13);
             this.label8.TabIndex = 234;
-            this.label8.Text = "0.00001";
+            this.label8.Text = "0.0001";
             // 
             // Form1
             // 
