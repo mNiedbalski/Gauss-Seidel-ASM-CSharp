@@ -23,7 +23,7 @@ namespace Gauss_Seidel
     public partial class Form1 : Form
     {
         [DllImport(@"E:\Osobiste\Projekt Asembler\Gauss-Siedel\x64\Debug\GaussSeidelASM.dll")]
-        static unsafe extern void MyProc1(float* sumPtr, float coefficientEq, float coefficientX, int jPassed, int kPassed);
+        static unsafe extern void MyProc1(int n, int maxIterations, float[] equations, float[] x, float[] x2, float tolerance);
         public static Semaphore threadsSemaphore;
         public static List<List<float>> results = new List<List<float>>();
         private static int amountOfThreads = 1;
@@ -101,7 +101,6 @@ namespace Gauss_Seidel
             List<List<List<float>>> systems = new List<List<List<float>>>();
             string filePath = "equations.txt"; //TEST
             systems = readFromFile(filePath);
-            float temppp = toleranceValue;
             Semaphore tempSemaphore = new Semaphore(amountOfThreads, amountOfThreads);
             threadsSemaphore= tempSemaphore;
             progressBar1.Maximum = systems.Count;
@@ -121,9 +120,14 @@ namespace Gauss_Seidel
             {
                 foreach (List<List<float>> system in systems)
                 {
-                    threadsSemaphore.WaitOne();
-                    float[][] eqArray = system.Select(a => a.ToArray()).ToArray(); //Zeby dalo sie uzywac w asmie
-                    Thread thread = new Thread(() => SolveInAsm(eqArray,system.Count(), maxIterations));
+                    List<float> systemIn1D = new List<float>();
+                    for (int i = 0; i < system.Count; i++)
+                        for (int j = 0; j < system.Count; j++)
+                            systemIn1D.Add(system[i][j]);
+                    float[] eqArray = systemIn1D.Select(a=>a).ToArray();
+                    
+                    //float[][] eqArray = system.Select(a => a.ToArray()).ToArray(); //Zeby dalo sie uzywac w asmie
+                    Thread thread = new Thread(() => SolveInAsm2(eqArray,system.Count(), maxIterations));
                     thread.Start();
                     progressBar1.Value++;
                 }
@@ -132,7 +136,7 @@ namespace Gauss_Seidel
             timeElapsedBox.Text = sw.ElapsedMilliseconds.ToString();
             resultGridView.DataSource = convertResults(results);
         }
-        public unsafe static void SolveInAsm(float[][] equations, int n,int maxIterations)
+        /*public unsafe static void SolveInAsm(float[][] equations, int n,int maxIterations)
         {                      
             List<float> x = new List<float>(); // lista nieznanych
             for (int i = 0; i < n; i++) 
@@ -161,15 +165,18 @@ namespace Gauss_Seidel
             }
                 results.Add(x);
                 threadsSemaphore.Release();
-        }
-        public unsafe static void SolveInAsm2(float[][] equations, int n, int maxIterations, float tolerance)
+        }*/
+        public unsafe static void SolveInAsm2(float[] equations, int n, int maxIterations)
         {
             List<float> x = new List<float>(); // lista nieznanych
             for (int i = 0; i < n; i++)
-                x.Add(0); // ustawienie początkowych wartości nieznanych
-            float[] xArray = x.ToArray();
-            
-            for (int i = 0; i < maxIterations; i++)
+                    x.Add(0); // ustawienie początkowych wartości nieznanych
+                
+            float[] xArray = x.Select(a => a).ToArray();
+            MyProc1(n, maxIterations, equations, xArray, xArray, toleranceValue);
+
+            //MyProc1(int n, int maxIterations, float equations[][], float x[], float x[], float tolerance)
+            /*for (int i = 0; i < maxIterations; i++)
             {
                 bool done = true;
                 for (int j = 0; j < n; j++)
@@ -181,14 +188,29 @@ namespace Gauss_Seidel
                     float[] neededEquation = equations[j];
                     for (int k = 0; k < n; k++)
                     {
-                        MyProc1(sumPtr, equations[j][k], x[k], j, k);
-                    }
+                        
+                        if (k!=j)  //if (k != j) sum -= equations[j][k] * x[k];
+                        {
+                        operacja:
+                            wlozyc eq[j][k] do xmm0 na 0 indeks
+                            zinkrementowac licznik (licznik=0)
+                            zinkrementowac k
+                            jesli k == 3 lub k == n skok do odejmij
+                            skok operacja
 
+                        odejmij:
+                            przemnoz xmm przez x[k]
+                            odejmij od zmiennej suma kazdy element xmm0
+                            jesli k < n przejdz spowrotem do operacja
+                            dalsza czesc programu
+                        }
+                    }
+                    x[j] = sum / equations[j][j];
                     if (Math.Abs(x[j] - temp) > tolerance) done = false;
                     
                 }
-                if (done) break;
-            }
+            if (done) break;
+            }*/
             results.Add(x);
             threadsSemaphore.Release();
         }
