@@ -29,15 +29,16 @@ MyProc1 proc
     jLoop:      
             xorps   xmm1, xmm1                 
             movdqu  xmm1, oword ptr[rax+r15]   ;Moving temp value to xmm1 register
-            shufps  xmm0, xmm0, 93h            ;Moving tolerance value to the left, so there is space for sum variable
             mov     r10, [rcx]                 ;
             imul    r10, r15                   ;Calculating address of value that will represent sum (equations[j][n])
             add     r10, rcx                   ;So in the end r10 = r8+r15*rcx*8+rcx*8
-            imul     r10, 8                     ;
+            imul    r10, 8                     ;
             add     r10, r8                    ;
+            shufps  xmm0, xmm0, 93h            ;Moving tolerance value to the left, so there is space for sum variable
             movdqu  xmm0, oword ptr[r10]       ;Storing sum variable in xmm0 at 0 index
             xor     r14, r14                   ;Initialize k loop counter in r14 register with value 0
             jmp     kLoop
+
     incrJ: 
             add     r15, 1                     ;Incrementing j counter
             cmp     r15, rdx                   ;Checking if loop has finished (loops until j==n)
@@ -47,19 +48,27 @@ MyProc1 proc
             cmp     r14, r15                   ;Checking if k==j
             je      incrK                      ;If they are equal, just increment k counter
             mov     r10, r14
-            imul     r10, 8
-            shufps  xmm1, xmm1, 93h            ;Creating space by moving left for xArray element located at rbx address
+            imul    r10, 8
+            shufps  xmm1, xmm1, 93h            ;Creating space by moving left for xArray element located at rbx address (temp now in slot 1)
             movdqu  xmm1, oword ptr [rax+r10]  ;Placing xArray element in xmm1 slot 0
             mov     r10, rcx
-
-            ;mulss   xmm0, xmm1                 ;equations[j][k] * x[k]
-
+            imul    r10, r15
+            add     r10, 14
+            imul    r10, 8
+            add     r10, r8
+            shufps  xmm0, xmm0, 93h            ;Moving sum variable to the left, so now there is space for equations[j][k]
+            movdqu  xmm0, oword ptr [r10]
+            mulss   xmm1, xmm0                 ;equations[j][k] * x[k]
+            shufps  xmm0, xmm0, 39h            ;Moving equations[j][k] to right (slot3) so now sum is on slot 0
+            subss   xmm0, xmm1                 ;sum=sum-equations[j][k]*x[k]
+            shufps  xmm1, xmm1,39h             ;Moving temp back to slot 0, so when loopK iterates again, it meets the same state of slot 0 in register xmm1
 
     incrK:
             add     r14, 1                      ;Incrementing k counter
             cmp     r14, rcx                    ;Checking if loop has finished (loops until k==n)
             je      incrJ                       ;Coming back to jLoop
             jmp     kLoop                       ;Coming back to loop
+
     endOfCalc:  
             ret
         
