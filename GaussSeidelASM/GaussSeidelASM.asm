@@ -35,17 +35,28 @@ MyProc1 proc
             xor     r14, r14                   ;Initialize k loop counter in r14 register with value 0
             jmp     kLoop
 
-    afterKLoop:
-            shufps  xmm0, xmm0, 39h            ;XMM0 = [sum][equations][][]
-            movss   xmm2, dword ptr[r9+15]     ;Loading x[j] into xmm2
-            movss   xmm0, xmm2                 ;XMM0 = [sum][equations][][x[j]]
+    afterKLoop:         ;first x[j] = sum / equations[j][j] then if (Math.Abs(x[j] - temp) > tolerance) done = false;
+            
+            ;XMM0 = [equations[j][k]][][][sum] XMM1 = [x[k]][][tolerance][temp]
+            mov     r10, r15                   ;Storing j counter in r10
+            imul    r10, r15                   ;
+            add     r10, r15                   ;Getting address equations[j][j] = r8+(r15*r15+r15)*4 
+            imul    r10, 4                     ;
+            add     r10, r8                    ;
+            movss   xmm2, dword ptr[r10]       ;XMM2 = [][][][equations[j][j]]
+            divss   xmm0, xmm2                 ;XMM0 = [equations[j][k]][][][x[j]] 
+            shufps  xmm1, xmm1, 93h            ;XMM1 = [][tolerance][temp][x[k]]
+            movss   xmm1, xmm0                 ;XMM1 = [][tolerance][temp][x[j]]
+            pextrd  dword ptr [r10], xmm0, 0   ;Saving x[j]=sum/equations[j][j] value in memory
+            movss   xmm0, xmm1                 ;XMM0 = [equations[j][k]][][][x[j]] MAYBE NOT NEEDED, BUT IDK IF pextrd FULLY EXTRACTS OR NOT
+
             xorps   xmm2, xmm2                 ;Clearing for use in comparing to 0
             subss   xmm0, xmm1                 ;x[j]-temp
-            ;cmpss   xmm0, xmm2                 ;;######################CORRECT################################
-            ;jl      Negative                   ;jump if x[j]-temp<0
+            cmpltss xmm0, xmm2                 ; remember that value of x[j] is overwritten by True or False
+            jl      Negative      ;jl          ;jump if x[j]-temp<0
             shufps  xmm1, xmm1, 39h            ;XMM1 = [temp][x[k]][][tolerance]
-            ;cmpss   xmm0, xmm1                 ;#######################CORRECT###############################
-            ;jg      doneFalse                  ;if x[j]-temp > tolerance
+            cmpltss xmm0, xmm1                 ; remember that value of x[j] is overwritten by True or False
+            jg      doneFalse  ;jg             ;if x[j]-temp > tolerance
             jmp     jLoop
     incrJ: 
             add     r15, 1                     ;Incrementing j counter
@@ -53,7 +64,7 @@ MyProc1 proc
             je      endOfCalc                  ;If j==n, jump to end
             jmp     jLoop
     Negative:
-            ;;mulss   xmm0, -1                       ;ABS[xmm0[0]]#######################################
+            ;;mulss   xmm0, -1                 ;ABS[xmm0[0]]#######################################
 
     doneFalse:
             mov     r13b,0                     ;done=false
@@ -89,18 +100,5 @@ MyProc1 proc
 
     endOfCalc:  
             ret
-        
-        
-
-;    mov     rdx, [rsp+40]   
-;    cmp     rdx, r9
-;    je      end1
-;    movdqu  xmm0, oword ptr[rcx]
-;    mulps   xmm1,xmm2
-;    subss   xmm0, xmm1
-;    pextrd  dword ptr [rcx], xmm0, 0     ;WYCIAGA DWORDA KTORY JEST NA INDEKSIE 0 W XMM0 (CZYLI NA NAJMLODSZYCH BITACH). TRZECI ARGUMENT DEFINIUJE KTORY BIT, DRUGI DEFINIUJE Z JAKIEGO XMMA WYCIAGAMY A PIERWSZY GDZIE WRZUCAMY
-;end1:
-                           
-
 MyProc1 endp
 end
