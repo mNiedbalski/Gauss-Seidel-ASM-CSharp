@@ -21,6 +21,9 @@ MyProc1 proc
     mainLoop: 
             cmp     r13b, 1
             je      endOfCalc
+            dec     rdx
+            cmp     rdx, 0
+            je      endOfCalc
             mov     r13b, 1                    ;Initialize boolean variable done in r13b register
             xor     r15, r15                   ;Initialize j loop counter in r15 register with value 0
     jLoop:                 
@@ -67,12 +70,12 @@ MyProc1 proc
             jmp     jLoop
     Negative:
             
-            movss xmm0, 0xbf800000
+            
             jmp AbsDone
             
     doneFalse:
             mov     r13b,0                     ;done=false
-            jmp     jLoop
+            jmp     incrJ
 
     kLoop:      
             cmp     r14, r15                   ;Checking if k==j
