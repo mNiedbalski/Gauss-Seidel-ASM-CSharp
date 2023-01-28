@@ -23,7 +23,7 @@ namespace Gauss_Seidel
     public partial class Form1 : Form
     {
         [DllImport(@"E:\Osobiste\Projekt Asembler\Gauss-Siedel\x64\Debug\GaussSeidelASM.dll")]
-        static unsafe extern void MyProc1(int n, int maxIterations, float[] equations, float[] x, float[] x2, float tolerance);
+        static unsafe extern void MyProc1(int n, int maxIterations, float[] equations, float[] x, float tolerance);
         public static Semaphore threadsSemaphore;
         public static List<List<float>> results = new List<List<float>>();
         private static int amountOfThreads = 1;
@@ -122,13 +122,15 @@ namespace Gauss_Seidel
                 {
                     List<float> systemIn1D = new List<float>();
                     for (int i = 0; i < system.Count; i++)
-                        for (int j = 0; j < system.Count; j++)
+                        for (int j = 0; j < system[i].Count; j++)
                             systemIn1D.Add(system[i][j]);
                     float[] eqArray = systemIn1D.Select(a=>a).ToArray();
-                    
+
                     //float[][] eqArray = system.Select(a => a.ToArray()).ToArray(); //Zeby dalo sie uzywac w asmie
-                    Thread thread = new Thread(() => SolveInAsm2(eqArray,system.Count(), maxIterations));
-                    thread.Start();
+                    //Thread thread = new Thread(() => SolveInAsm2(eqArray,system.Count(), maxIterations));
+                    //thread.Start();
+                    int abc = system.Count();
+                    SolveInAsm2(eqArray, system.Count(), maxIterations);
                     progressBar1.Value++;
                 }
             }
@@ -173,7 +175,7 @@ namespace Gauss_Seidel
                     x.Add(0); // ustawienie początkowych wartości nieznanych
                 
             float[] xArray = x.Select(a => a).ToArray();
-            MyProc1(n, maxIterations, equations, xArray, xArray, toleranceValue);
+            MyProc1(n, maxIterations, equations, xArray, toleranceValue);
 
             //MyProc1(int n, int maxIterations, float equations[][], float x[], float x[], float tolerance)
             /*for (int i = 0; i < maxIterations; i++)
