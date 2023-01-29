@@ -45,9 +45,9 @@ MyProc1 proc
 
     afterKLoop:         ;first x[j] = sum / equations[j][j] then if (Math.Abs(x[j] - temp) > tolerance) done = false;
             
-            ;XMM0 = [equations[j][k]][][][sum] XMM1 = [x[k]][][tolerance][temp]
+;########## XMM0 = [equations[j][k]][][][sum] XMM1 = [x[k]][][tolerance][temp] ################
             mov     r10, r15                   ;Storing j counter in r10
-            imul    r10, r15                   ;
+            imul    r10, r12                   ;
             add     r10, r15                   ;Getting address equations[j][j] = r8+(r15*r15+r15)*4 
             imul    r10, 4                     ;
             movss   xmm2, dword ptr[r8+r10]    ;XMM2 = [][][][equations[j][j]]
