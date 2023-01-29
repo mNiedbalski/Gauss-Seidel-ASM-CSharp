@@ -176,6 +176,8 @@ namespace Gauss_Seidel
                 
             float[] xArray = x.Select(a => a).ToArray();
             MyProc1(n, maxIterations, equations, xArray, toleranceValue);
+            for (int i=0;i<n;i++)
+                x[i]=xArray[i];
 
             //MyProc1(int n, int maxIterations, float equations[][], float x[], float x[], float tolerance)
             /*for (int i = 0; i < maxIterations; i++)
