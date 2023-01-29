@@ -214,7 +214,7 @@ namespace Gauss_Seidel
             if (done) break;
             }*/
             results.Add(x);
-            threadsSemaphore.Release();
+            //threadsSemaphore.Release();
         }
         public static void Solve(List<List<float>> equations, int maxIterations, float tolerance)
         {
@@ -230,9 +230,13 @@ namespace Gauss_Seidel
                     float sum = equations[j][n]; // suma wyrazów wolnych
                     for (int k = 0; k < n; k++)
                     {
-                        if (k != j) sum -= equations[j][k] * x[k];        
+                        if (k != j) sum -= equations[j][k] * x[k];
+                        float eqtemp = equations[j][k];
+                        float xtemp = x[k];
                     }
                     x[j] = sum / equations[j][j]; // obliczanie nowej wartości nieznanej
+                    float xd = x[j];
+                    float result = x[j] - temp;
                     if (Math.Abs(x[j] - temp) > tolerance) done = false; // sprawdzanie czy wartość nieznanej się zmieniła
                 }
                 if (done) break; // jeśli wartości nieznanych nie uległy zmianie, to przerwij pętlę
