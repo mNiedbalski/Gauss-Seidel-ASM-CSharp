@@ -1,7 +1,7 @@
 
 ; MyProc1(int n, int maxIterations, float equations[][], float x[], float tolerance)
-; POINTERY TO INTY!
-; rcx, rdx , r9, r8, stack, stack
+; 
+; rcx, rdx , r9, r8, stack
 
 
 ; Registers:
@@ -10,9 +10,11 @@
 ;   equationsPtr: r8
 ;   xArrayReturnedPtr: r9
 ;   tolerance: stack [rsp+40]
+;
 ;   n+1: r12
-;   
-;if (k != j) sum -= equations[j][k] * x[k];
+;   k: r14
+;   j: r15
+;   r13b: bool done 
 .code
 
 MyProc1 proc        
@@ -30,7 +32,7 @@ MyProc1 proc
             mov     r13b, 1                    ;Initialize boolean variable done in r13b register
             xor     r15, r15                   ;Initialize j loop counter in r15 register with value 0
     jLoop:                 
-            movss   xmm2, dword ptr[r9+r15*4]    ;Moving temp value to xmm2 register
+            movss   xmm2, dword ptr[r9+r15*4]  ;Moving temp value to xmm2 register
             shufps  xmm1, xmm1, 93h            ;XMM1 = [][][tolerance][]
             movss   xmm1, xmm2                 ;XMM1 = [][][tolerance][temp]
 
@@ -68,17 +70,17 @@ MyProc1 proc
             jg      doneFalse  ;jg             ;if x[j]-temp > tolerance
     incrJ: 
             inc     r15                        ;Incrementing j counter
-            cmp     r15, rcx                    ;Checking if loop has finished (loops till j<n)                 
+            cmp     r15, rcx                   ;Checking if loop has finished (loops till j<n)                 
             je      mainLoop                   ;If j==n, jump back to mainLoop
             jmp     jLoop
     Negative:
-            movss   xmm2, xmm0
-            subss   xmm0, xmm0
-            subss   xmm0, xmm2
+            movss   xmm2, xmm0                 ;
+            subss   xmm0, xmm0                 ;Calculating ABS value (if x<0 => x=x-x-x Maszyna W vibes)
+            subss   xmm0, xmm2                 ;
             jmp AbsDone
             
     doneFalse:
-            mov     r13b,0                     ;done=false
+            mov     r13b,0                     ;done = false
             jmp     incrJ
 
     kLoop:      
@@ -108,10 +110,6 @@ MyProc1 proc
             jmp     kLoop                      ;Coming back to loop
 
     endOfCalc:
-            xorps xmm4, xmm4
-            movss xmm4, dword ptr [r9]
-            movss xmm4, dword ptr [r9+4]
-            movss xmm4, dword ptr [r9+8]
             ret
 MyProc1 endp
 end

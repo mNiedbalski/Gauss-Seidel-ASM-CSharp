@@ -53,6 +53,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -98,6 +99,7 @@
             this.helpButton.TabIndex = 212;
             this.helpButton.Text = "Help";
             this.helpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
             // 
             // runButton
             // 
@@ -236,7 +238,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(207, 499);
+            this.label3.Location = new System.Drawing.Point(203, 499);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(19, 13);
             this.label3.TabIndex = 228;
@@ -300,11 +302,22 @@
             this.label8.TabIndex = 234;
             this.label8.Text = "0.0001";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(433, 220);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(220, 31);
+            this.button1.TabIndex = 235;
+            this.button1.Text = "Choose file";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(702, 583);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -368,6 +381,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button1;
     }
 }
 

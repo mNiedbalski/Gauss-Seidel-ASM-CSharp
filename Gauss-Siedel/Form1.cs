@@ -17,9 +17,6 @@ using System.Runtime.InteropServices;
 
 namespace Gauss_Seidel
 {
-    /*
-     * Dispatcher.Run(()=>{tu wklej kod dodający coś do widoku});
-     */
     public partial class Form1 : Form
     {
         [DllImport(@"E:\Osobiste\Projekt Asembler\Gauss-Siedel\x64\Debug\GaussSeidelASM.dll")]
@@ -30,6 +27,7 @@ namespace Gauss_Seidel
         private static int maxIterations = 10;
         private static bool runInCSharp = true;
         private static float toleranceValue = 0.0001F;
+        private static string filePath = "equations.txt";
         public Form1()
         {
             InitializeComponent();
@@ -75,17 +73,17 @@ namespace Gauss_Seidel
         {
             var dt = new DataTable();
             int rowCount = results.Count;
-            int colCount = results[0].Count;
+            int colCount = results.Max(x => x.Count);
             for (int i = 0; i < colCount; i++)
-            {
                 dt.Columns.Add();
-            }
-            for (int i = 0; i < rowCount; i++)
+            foreach (List<float> systemResult in results)
             {
                 var row = dt.NewRow();
-                for (int j = 0; j < colCount; j++)
+                int varCounter = 0;
+                foreach (float varResult in systemResult)
                 {
-                    row[j] = results[i][j];
+                    row[varCounter] = varResult;
+                    varCounter++;
                 }
                 dt.Rows.Add(row);
             }
@@ -99,12 +97,16 @@ namespace Gauss_Seidel
         private void runButton_Click(object sender, EventArgs e)
         {
             List<List<List<float>>> systems = new List<List<List<float>>>();
-            string filePath = "equations.txt"; //TEST
+            //string filePath = "equations.txt"; //TEST
             systems = readFromFile(filePath);
             Semaphore tempSemaphore = new Semaphore(amountOfThreads, amountOfThreads);
             threadsSemaphore= tempSemaphore;
             progressBar1.Maximum = systems.Count;
             progressBar1.Minimum = 0; progressBar1.Value = 0;
+            amountOfThreads = trackBar1.Value;
+            maxIterations = iterationsBar.Value;
+            toleranceValue = 1/Convert.ToSingle(trackBar2.Value);
+            float tempTol = toleranceValue;
             Stopwatch sw = Stopwatch.StartNew();
             if (runInCSharp)
             {
@@ -120,55 +122,23 @@ namespace Gauss_Seidel
             {
                 foreach (List<List<float>> system in systems)
                 {
+                    threadsSemaphore.WaitOne();
                     List<float> systemIn1D = new List<float>();
                     for (int i = 0; i < system.Count; i++)
                         for (int j = 0; j < system[i].Count; j++)
                             systemIn1D.Add(system[i][j]);
                     float[] eqArray = systemIn1D.Select(a=>a).ToArray();
-
-                    //float[][] eqArray = system.Select(a => a.ToArray()).ToArray(); //Zeby dalo sie uzywac w asmie
-                    //Thread thread = new Thread(() => SolveInAsm2(eqArray,system.Count(), maxIterations));
-                    //thread.Start();
-                    int abc = system.Count();
-                    SolveInAsm2(eqArray, system.Count(), maxIterations);
+                    Thread thread = new Thread(() => SolveInAsm(eqArray,system.Count(), maxIterations));
+                    thread.Start();
                     progressBar1.Value++;
                 }
             }
             sw.Stop();
             timeElapsedBox.Text = sw.ElapsedMilliseconds.ToString();
             resultGridView.DataSource = convertResults(results);
+            results.Clear();
         }
-        /*public unsafe static void SolveInAsm(float[][] equations, int n,int maxIterations)
-        {                      
-            List<float> x = new List<float>(); // lista nieznanych
-            for (int i = 0; i < n; i++) 
-                x.Add(0); // ustawienie początkowych wartości nieznanych
-            float[] xArray = x.ToArray();
-            for (int i = 0; i < maxIterations; i++)
-            {
-            bool done = true;
-                for (int j=0; j< n; j++)
-                {
-                    float temp = x[j];
-                    float sum = equations[j][n];
-                    float* sumPtr = &sum;
-                    //docelowo to będzie w asmie
-                    for (int k=0; k < n; k++)
-                    {
-                            MyProc1(sumPtr, equations[j][k], x[k], j, k);
-                    }
-                    x[j] = sum / equations[j][j];
-                    if (Math.Abs(x[j] - temp) > toleranceValue) done = false;
-                    //koniec asm
-                }
-
-                if (done) break;
-                
-            }
-                results.Add(x);
-                threadsSemaphore.Release();
-        }*/
-        public unsafe static void SolveInAsm2(float[] equations, int n, int maxIterations)
+        public unsafe static void SolveInAsm(float[] equations, int n, int maxIterations)
         {
             List<float> x = new List<float>(); // lista nieznanych
             for (int i = 0; i < n; i++)
@@ -178,45 +148,8 @@ namespace Gauss_Seidel
             MyProc1(n, maxIterations, equations, xArray, toleranceValue);
             for (int i=0;i<n;i++)
                 x[i]=xArray[i];
-
-            //MyProc1(int n, int maxIterations, float equations[][], float x[], float x[], float tolerance)
-            /*for (int i = 0; i < maxIterations; i++)
-            {
-                bool done = true;
-                for (int j = 0; j < n; j++)
-                {
-                    float temp = x[j];
-                    float sum = equations[j][n];
-                    float* sumPtr = &sum;
-                    
-                    float[] neededEquation = equations[j];
-                    for (int k = 0; k < n; k++)
-                    {
-                        
-                        if (k!=j)  //if (k != j) sum -= equations[j][k] * x[k];
-                        {
-                        operacja:
-                            wlozyc eq[j][k] do xmm0 na 0 indeks
-                            zinkrementowac licznik (licznik=0)
-                            zinkrementowac k
-                            jesli k == 3 lub k == n skok do odejmij
-                            skok operacja
-
-                        odejmij:
-                            przemnoz xmm przez x[k]
-                            odejmij od zmiennej suma kazdy element xmm0
-                            jesli k < n przejdz spowrotem do operacja
-                            dalsza czesc programu
-                        }
-                    }
-                    x[j] = sum / equations[j][j];
-                    if (Math.Abs(x[j] - temp) > tolerance) done = false;
-                    
-                }
-            if (done) break;
-            }*/
             results.Add(x);
-            //threadsSemaphore.Release();
+            threadsSemaphore.Release();
         }
         public static void Solve(List<List<float>> equations, int maxIterations, float tolerance)
         {
@@ -233,12 +166,8 @@ namespace Gauss_Seidel
                     for (int k = 0; k < n; k++)
                     {
                         if (k != j) sum -= equations[j][k] * x[k];
-                        float eqtemp = equations[j][k];
-                        float xtemp = x[k];
                     }
                     x[j] = sum / equations[j][j]; // obliczanie nowej wartości nieznanej
-                    float xd = x[j];
-                    float result = x[j] - temp;
                     if (Math.Abs(x[j] - temp) > tolerance) done = false; // sprawdzanie czy wartość nieznanej się zmieniła
                 }
                 if (done) break; // jeśli wartości nieznanych nie uległy zmianie, to przerwij pętlę
@@ -350,6 +279,37 @@ namespace Gauss_Seidel
         private void label1_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            Form helpForm = new Form();
+            helpForm.Text = "Help";
+            helpForm.Size = new Size(300, 200);
+            helpForm.StartPosition = FormStartPosition.CenterScreen;
+
+            Label helpText = new Label();
+            helpText.Text = "Tolerance: Value that determines whether execution of algorithm should end sooner depending on difference between last calculated result and recent one.\n If the difference is smaller than tolerance value, algorithm ends earlier.\n\n Max iterations: Maximum amount of iterations, that algorithm will do in order to calculate results.";
+
+            helpText.Location = new Point(10, 10);
+            helpText.Size = new Size(280, 180);
+            helpForm.Controls.Add(helpText);
+
+            helpForm.ShowDialog();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = openFileDialog.FileName;
+                // Do something with the file here (e.g. read its contents)
+            }
         }
     }
 }
