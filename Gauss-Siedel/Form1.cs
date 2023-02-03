@@ -27,7 +27,7 @@ namespace Gauss_Seidel
         private static int maxIterations = 10;
         private static bool runInCSharp = true;
         private static float toleranceValue = 0.0001F;
-        private static string filePath = "equations.txt";
+        private static string filePath = "bigDataSet.txt";
         public Form1()
         {
             InitializeComponent();
